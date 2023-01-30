@@ -3,13 +3,13 @@ const { userModel } = require('../models/user');
 
 const checkError = (err, res) => {
   console.log(err);
-  if (err.name === 'CastError') {
+  if (err.name === 'CastError' || err.name === 'ValidationError') {
     res.status(400).send({ message: err.message });
   } else if (err.name === 'notFound') {
     res.status(err.status).send({ message: err.message });
     // думаю, что эта проверка не нужна, но иначе я не смогу разграничить кода ошибок
   } else {
-    res.status(400).send({ message: err.message });
+    res.status(500).send({ message: err.message });
   }
 };
 
@@ -17,7 +17,7 @@ const getUsers = (req, res) => {
   userModel
     .find({})
     .then((data) => res.status(200).send(data))
-    .catch((err) => console.log(err));
+    .catch((err) => checkError(err, res));
 };
 const getUser = (req, res) => {
   userModel
@@ -42,7 +42,7 @@ const setUser = (req, res) => {
     })
     .catch((err) => {
       console.log(err);
-      res.status(400).send({ message: err.message });
+      checkError(err, res);
     });
 };
 const updateProfile = (req, res) => {

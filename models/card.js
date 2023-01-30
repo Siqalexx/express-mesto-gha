@@ -11,7 +11,7 @@ const cardSchema = moongose.Schema({
     type: String,
     required: true,
   },
-  ownerId: {
+  owner: {
     type: moongose.Schema.Types.ObjectId,
     ref: 'user',
     required: true,

@@ -3,7 +3,7 @@ const { cardModel } = require('../models/card');
 
 const checkError = (err, res) => {
   console.log(err);
-  if (err.name === 'CastError') {
+  if (err.name === 'CastError' || err.name === 'ValidationError') {
     res.status(400).send({ message: err.message });
   } else if (err.name === 'notFound') {
     res.status(err.status).send({ message: err.message });
@@ -20,17 +20,17 @@ const getCards = (req, res) => {
       res.status(200).send(data);
     })
     .catch((err) => {
-      res.status(500).send({ message: err.message });
+      checkError(err, res);
     });
 };
 const setCard = (req, res) => {
   const { name, link } = req.body;
   cardModel
-    .create({ name, link, ownerId: req.user._id })
+    .create({ name, link, owner: req.user._id })
     .then((data) => res.status(200).send(data))
     .catch((err) => {
       console.log(err);
-      res.status(400).send({ message: err.message });
+      checkError(err, res);
     });
 };
 const deleteCard = (req, res) => {
