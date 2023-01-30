@@ -1,12 +1,13 @@
-const notFound = require("../errors/notFoundError");
-const { cardModel } = require("../models/card");
+const NotFound = require('../errors/notFoundError');
+const { cardModel } = require('../models/card');
 
 const checkError = (err, res) => {
   console.log(err);
-  if (err.name === "CastError") {
+  if (err.name === 'CastError') {
     res.status(400).send({ message: err.message });
-  } else if (err.name === "notFound") {
-    res.status(err.status).send({ message: err.message }); //думаю, что эта проверка не нужна, но иначе я не смогу разграничить кода ошибок
+  } else if (err.name === 'notFound') {
+    res.status(err.status).send({ message: err.message });
+    // думаю, что эта проверка не нужна, но иначе я не смогу разграничить кода ошибок
   } else {
     res.status(500).send({ message: err.message });
   }
@@ -24,13 +25,12 @@ const getCards = (req, res) => {
 };
 const setCard = (req, res) => {
   const { name, link } = req.body;
-  const id = req.user._id;
   cardModel
-    .create({ name: name, link: link, ownerId: id })
+    .create({ name, link, ownerId: req.user._id })
     .then((data) => res.status(200).send(data))
     .catch((err) => {
       console.log(err);
-      if (err.name === "CastError") {
+      if (err.name === 'CastError') {
         res.status(400).send({ message: err.message });
       } else {
         res.status(500).send({ message: err.message });
@@ -38,14 +38,14 @@ const setCard = (req, res) => {
     });
 };
 const deleteCard = (req, res) => {
-  const cardId = req.params.cardId;
+  const { cardId } = req.params;
   cardModel
     .findByIdAndDelete(cardId)
     .then((data) => {
       if (data) {
         res.status(200).send(data);
       } else {
-        throw new notFound("Карточка не найдена");
+        throw new NotFound('Карточка не найдена');
       }
     })
     .catch((err) => {
@@ -53,7 +53,7 @@ const deleteCard = (req, res) => {
     });
 };
 const setLike = (req, res) => {
-  const cardId = req.params.cardId;
+  const { cardId } = req.params;
   const id = req.user._id;
   cardModel
     .findByIdAndUpdate(cardId, { $addToSet: { likes: id } }, { new: true })
@@ -61,7 +61,7 @@ const setLike = (req, res) => {
       if (data) {
         res.status(200).send(data);
       } else {
-        throw new notFound("Карточка не найдена");
+        throw new NotFound('Карточка не найдена');
       }
     })
     .catch((err) => {
@@ -69,7 +69,7 @@ const setLike = (req, res) => {
     });
 };
 const deleteLike = (req, res) => {
-  const cardId = req.params.cardId;
+  const { cardId } = req.params;
   const id = req.user._id;
   cardModel
     .findByIdAndUpdate(cardId, { $pull: { likes: id } }, { new: true })
@@ -77,7 +77,7 @@ const deleteLike = (req, res) => {
       if (data) {
         res.status(200).send(data);
       } else {
-        throw new notFound("Карточка не найдена");
+        throw new NotFound('Карточка не найдена');
       }
     })
     .catch((err) => {

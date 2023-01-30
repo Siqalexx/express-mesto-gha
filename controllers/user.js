@@ -1,12 +1,13 @@
-const notFound = require("../errors/notFoundError");
-const { userModel } = require("../models/user");
+const NotFound = require('../errors/notFoundError');
+const { userModel } = require('../models/user');
 
 const checkError = (err, res) => {
   console.log(err);
-  if (err.name === "CastError") {
+  if (err.name === 'CastError') {
     res.status(400).send({ message: err.message });
-  } else if (err.name === "notFound") {
-    res.status(err.status).send({ message: err.message }); //думаю, что эта проверка не нужна, но иначе я не смогу разграничить кода ошибок
+  } else if (err.name === 'notFound') {
+    res.status(err.status).send({ message: err.message });
+    // думаю, что эта проверка не нужна, но иначе я не смогу разграничить кода ошибок
   } else {
     res.status(500).send({ message: err.message });
   }
@@ -25,7 +26,7 @@ const getUser = (req, res) => {
       if (data) {
         res.status(200).send(data);
       } else {
-        throw new notFound("Пользователь не найден");
+        throw new NotFound('Пользователь не найден');
       }
     })
     .catch((err) => {
@@ -41,7 +42,7 @@ const setUser = (req, res) => {
     })
     .catch((err) => {
       console.log(err);
-      if (err.name === "CastError") {
+      if (err.name === 'CastError') {
         res.status(400).send({ message: err.message });
       } else {
         res.status(500).send({ message: err.message });
@@ -53,14 +54,14 @@ const updateProfile = (req, res) => {
   userModel
     .findByIdAndUpdate(
       req.user._id,
-      { name: name, about: about },
-      { new: true }
+      { name, about },
+      { new: true },
     )
     .then((data) => {
       if (data) {
         res.status(200).send(data);
       } else {
-        throw new notFound("Пользователь не найден");
+        throw new NotFound('Пользователь не найден');
       }
     })
     .catch((err) => {
@@ -70,12 +71,12 @@ const updateProfile = (req, res) => {
 const updateAvatar = (req, res) => {
   const { avatar } = req.body;
   userModel
-    .findByIdAndUpdate(req.user._id, { avatar: avatar }, { new: true })
+    .findByIdAndUpdate(req.user._id, { avatar }, { new: true })
     .then((data) => {
       if (data) {
         res.status(200).send(data);
       } else {
-        throw new notFound("Пользователь не найден");
+        throw new NotFound('Пользователь не найден');
       }
     })
     .catch((err) => {

@@ -1,4 +1,5 @@
-const moongose = require("mongoose");
+const moongose = require('mongoose');
+
 const cardSchema = moongose.Schema({
   name: {
     type: String,
@@ -12,11 +13,11 @@ const cardSchema = moongose.Schema({
   },
   ownerId: {
     type: moongose.Schema.Types.ObjectId,
-    ref: "user",
+    ref: 'user',
     required: true,
   },
   likes: {
-    type: [{ type: moongose.Schema.Types.ObjectId, ref: "user" }],
+    type: [{ type: moongose.Schema.Types.ObjectId, ref: 'user' }],
     default: [],
   },
   createdAt: {
@@ -24,4 +25,4 @@ const cardSchema = moongose.Schema({
     default: Date.now,
   },
 });
-module.exports.cardModel = moongose.model("card", cardSchema);
+module.exports.cardModel = moongose.model('card', cardSchema);

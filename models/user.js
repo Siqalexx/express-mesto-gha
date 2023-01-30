@@ -1,4 +1,5 @@
-const moongose = require("mongoose");
+const moongose = require('mongoose');
+
 const userSchema = moongose.Schema({
   name: {
     type: String,
@@ -17,4 +18,4 @@ const userSchema = moongose.Schema({
     required: true,
   },
 });
-module.exports.userModel = moongose.model("user", userSchema);
+module.exports.userModel = moongose.model('user', userSchema);
