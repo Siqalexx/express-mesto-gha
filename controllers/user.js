@@ -42,11 +42,7 @@ const setUser = (req, res) => {
     })
     .catch((err) => {
       console.log(err);
-      if (err.name === 'CastError') {
-        res.status(404).send({ message: err.message });
-      } else {
-        res.status(500).send({ message: err.message });
-      }
+      res.status(404).send({ message: err.message });
     });
 };
 const updateProfile = (req, res) => {
