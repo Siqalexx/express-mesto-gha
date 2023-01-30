@@ -23,11 +23,10 @@ const getUser = (req, res) => {
   userModel
     .findOne({ _id: req.params.userId })
     .then((data) => {
-      if (data) {
-        res.status(200).send(data);
-      } else {
+      if (!data) {
         throw new NotFound('Пользователь не найден');
       }
+      res.status(200).send(data);
     })
     .catch((err) => {
       checkError(err, res);
@@ -56,11 +55,10 @@ const updateProfile = (req, res) => {
       },
     )
     .then((data) => {
-      if (data) {
-        res.status(200).send(data);
-      } else {
+      if (!data) {
         throw new NotFound('Пользователь не найден');
       }
+      res.status(200).send(data);
     })
     .catch((err) => {
       checkError(err, res);
@@ -75,11 +73,10 @@ const updateAvatar = (req, res) => {
       { new: true, runValidators: true },
     )
     .then((data) => {
-      if (data) {
-        res.status(200).send(data);
-      } else {
+      if (!data) {
         throw new NotFound('Пользователь не найден');
       }
+      res.status(200).send(data);
     })
     .catch((err) => {
       checkError(err, res);

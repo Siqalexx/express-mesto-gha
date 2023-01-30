@@ -14,6 +14,8 @@ const checkError = (err, res) => {
 };
 
 const getCards = (req, res) => {
+  // Не знаю, нужно ли в каждом then обрабатывать получение data, ведь здесь
+  // так или иначе она придет не null
   cardModel
     .find({})
     .then((data) => {
@@ -38,11 +40,10 @@ const deleteCard = (req, res) => {
   cardModel
     .findByIdAndDelete(cardId)
     .then((data) => {
-      if (data) {
-        res.status(200).send(data);
-      } else {
+      if (!data) {
         throw new NotFound('Карточка не найдена');
       }
+      res.status(200).send(data);
     })
     .catch((err) => {
       checkError(err, res);
@@ -54,11 +55,10 @@ const setLike = (req, res) => {
   cardModel
     .findByIdAndUpdate(cardId, { $addToSet: { likes: id } }, { new: true })
     .then((data) => {
-      if (data) {
-        res.status(200).send(data);
-      } else {
+      if (!data) {
         throw new NotFound('Карточка не найдена');
       }
+      res.status(200).send(data);
     })
     .catch((err) => {
       checkError(err, res);
@@ -70,11 +70,10 @@ const deleteLike = (req, res) => {
   cardModel
     .findByIdAndUpdate(cardId, { $pull: { likes: id } }, { new: true })
     .then((data) => {
-      if (data) {
-        res.status(200).send(data);
-      } else {
+      if (!data) {
         throw new NotFound('Карточка не найдена');
       }
+      res.status(200).send(data);
     })
     .catch((err) => {
       checkError(err, res);
