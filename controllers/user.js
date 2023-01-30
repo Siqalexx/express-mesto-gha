@@ -42,7 +42,7 @@ const setUser = (req, res) => {
     })
     .catch((err) => {
       console.log(err);
-      res.status(404).send({ message: err.message });
+      res.status(400).send({ message: err.message });
     });
 };
 const updateProfile = (req, res) => {
