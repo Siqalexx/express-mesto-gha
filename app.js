@@ -18,6 +18,13 @@ app.use('/', userRouter);
 
 app.use('/', cardRouter);
 
+app.use((req, res, next) => {
+  res.status(404).json({
+    message:
+      'Неправильный адрес',
+  });
+});
+
 app.listen(3000, () => {
   // передаю порт таким образом, потому что нет возможности передать его через set в VScodе,
   console.log('Сервер запущен');

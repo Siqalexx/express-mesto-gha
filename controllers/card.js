@@ -30,11 +30,7 @@ const setCard = (req, res) => {
     .then((data) => res.status(200).send(data))
     .catch((err) => {
       console.log(err);
-      if (err.name === 'CastError') {
-        res.status(400).send({ message: err.message });
-      } else {
-        res.status(500).send({ message: err.message });
-      }
+      res.status(400).send({ message: err.message });
     });
 };
 const deleteCard = (req, res) => {

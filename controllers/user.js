@@ -9,7 +9,7 @@ const checkError = (err, res) => {
     res.status(err.status).send({ message: err.message });
     // думаю, что эта проверка не нужна, но иначе я не смогу разграничить кода ошибок
   } else {
-    res.status(500).send({ message: err.message });
+    res.status(400).send({ message: err.message });
   }
 };
 
@@ -43,7 +43,7 @@ const setUser = (req, res) => {
     .catch((err) => {
       console.log(err);
       if (err.name === 'CastError') {
-        res.status(400).send({ message: err.message });
+        res.status(404).send({ message: err.message });
       } else {
         res.status(500).send({ message: err.message });
       }
@@ -55,7 +55,9 @@ const updateProfile = (req, res) => {
     .findByIdAndUpdate(
       req.user._id,
       { name, about },
-      { new: true },
+      {
+        new: true, runValidators: true,
+      },
     )
     .then((data) => {
       if (data) {
@@ -71,7 +73,11 @@ const updateProfile = (req, res) => {
 const updateAvatar = (req, res) => {
   const { avatar } = req.body;
   userModel
-    .findByIdAndUpdate(req.user._id, { avatar }, { new: true })
+    .findByIdAndUpdate(
+      req.user._id,
+      { avatar },
+      { new: true, runValidators: true },
+    )
     .then((data) => {
       if (data) {
         res.status(200).send(data);
