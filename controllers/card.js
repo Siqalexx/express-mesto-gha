@@ -1,15 +1,19 @@
 const NotFound = require('../errors/notFoundError');
 const { cardModel } = require('../models/card');
 
+const OK = 200;
+const VALIDERR = 400;
+const OTHERERR = 500;
+
 const checkError = (err, res) => {
   console.log(err);
   if (err.name === 'CastError' || err.name === 'ValidationError') {
-    res.status(400).send({ message: err.message });
+    res.status(VALIDERR).send({ message: err.message });
   } else if (err.name === 'notFound') {
     res.status(err.status).send({ message: err.message });
     // думаю, что эта проверка не нужна, но иначе я не смогу разграничить кода ошибок
   } else {
-    res.status(500).send({ message: err.message });
+    res.status(OTHERERR).send({ message: err.message });
   }
 };
 
@@ -19,7 +23,7 @@ const getCards = (req, res) => {
   cardModel
     .find({})
     .then((data) => {
-      res.status(200).send(data);
+      res.status(OK).send(data);
     })
     .catch((err) => {
       checkError(err, res);
@@ -29,7 +33,7 @@ const setCard = (req, res) => {
   const { name, link } = req.body;
   cardModel
     .create({ name, link, owner: req.user._id })
-    .then((data) => res.status(200).send(data))
+    .then((data) => res.status(OK).send(data))
     .catch((err) => {
       console.log(err);
       checkError(err, res);
@@ -43,7 +47,7 @@ const deleteCard = (req, res) => {
       if (!data) {
         throw new NotFound('Карточка не найдена');
       }
-      res.status(200).send(data);
+      res.status(OK).send(data);
     })
     .catch((err) => {
       checkError(err, res);
@@ -58,7 +62,7 @@ const setLike = (req, res) => {
       if (!data) {
         throw new NotFound('Карточка не найдена');
       }
-      res.status(200).send(data);
+      res.status(OK).send(data);
     })
     .catch((err) => {
       checkError(err, res);
@@ -73,7 +77,7 @@ const deleteLike = (req, res) => {
       if (!data) {
         throw new NotFound('Карточка не найдена');
       }
-      res.status(200).send(data);
+      res.status(OK).send(data);
     })
     .catch((err) => {
       checkError(err, res);

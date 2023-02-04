@@ -1,22 +1,25 @@
 const NotFound = require('../errors/notFoundError');
 const { userModel } = require('../models/user');
 
+const OK = 200;
+const VALIDERR = 400;
+const OTHERERR = 500;
 const checkError = (err, res) => {
   console.log(err);
   if (err.name === 'CastError' || err.name === 'ValidationError') {
-    res.status(400).send({ message: err.message });
+    res.status(VALIDERR).send({ message: err.message });
   } else if (err.name === 'notFound') {
     res.status(err.status).send({ message: err.message });
     // думаю, что эта проверка не нужна, но иначе я не смогу разграничить кода ошибок
   } else {
-    res.status(500).send({ message: err.message });
+    res.status(OTHERERR).send({ message: err.message });
   }
 };
 
 const getUsers = (req, res) => {
   userModel
     .find({})
-    .then((data) => res.status(200).send(data))
+    .then((data) => res.status(OK).send(data))
     .catch((err) => checkError(err, res));
 };
 const getUser = (req, res) => {
@@ -26,7 +29,7 @@ const getUser = (req, res) => {
       if (!data) {
         throw new NotFound('Пользователь не найден');
       }
-      res.status(200).send(data);
+      res.status(OK).send(data);
     })
     .catch((err) => {
       checkError(err, res);
@@ -37,7 +40,7 @@ const setUser = (req, res) => {
   userModel
     .create({ name, about, avatar })
     .then((data) => {
-      res.status(200).send(data);
+      res.status(OK).send(data);
     })
     .catch((err) => {
       console.log(err);
@@ -58,7 +61,7 @@ const updateProfile = (req, res) => {
       if (!data) {
         throw new NotFound('Пользователь не найден');
       }
-      res.status(200).send(data);
+      res.status(OK).send(data);
     })
     .catch((err) => {
       checkError(err, res);
@@ -76,7 +79,7 @@ const updateAvatar = (req, res) => {
       if (!data) {
         throw new NotFound('Пользователь не найден');
       }
-      res.status(200).send(data);
+      res.status(OK).send(data);
     })
     .catch((err) => {
       checkError(err, res);
