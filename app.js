@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const userRouter = require('./router/user');
 const cardRouter = require('./router/card');
+const { ERRORSRC } = require('./constants/constants');
 
 const app = express();
 
@@ -19,7 +20,7 @@ app.use('/', userRouter);
 app.use('/', cardRouter);
 
 app.use((req, res) => {
-  res.status(404).json({
+  res.status(ERRORSRC).json({
     message:
       'Неправильный адрес',
   });

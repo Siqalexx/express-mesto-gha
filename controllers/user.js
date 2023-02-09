@@ -1,9 +1,7 @@
 const NotFound = require('../errors/notFoundError');
 const { userModel } = require('../models/user');
+const { OK, VALIDERR, OTHERERR } = require('../constants/constants');
 
-const OK = 200;
-const VALIDERR = 400;
-const OTHERERR = 500;
 const checkError = (err, res) => {
   console.log(err);
   if (err.name === 'CastError' || err.name === 'ValidationError') {

@@ -1,9 +1,6 @@
 const NotFound = require('../errors/notFoundError');
 const { cardModel } = require('../models/card');
-
-const OK = 200;
-const VALIDERR = 400;
-const OTHERERR = 500;
+const { OK, VALIDERR, OTHERERR } = require('../constants/constants');
 
 const checkError = (err, res) => {
   console.log(err);
