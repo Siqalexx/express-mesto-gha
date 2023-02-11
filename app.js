@@ -13,7 +13,6 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(errors());
 
 app.post(
   '/signin',
@@ -48,7 +47,10 @@ app.use('/', userRouter);
 
 app.use('/', cardRouter);
 
+app.use(errors());
+
 app.use((err, req, res, next) => {
+  console.log(123);
   const { message, status = 500 } = err;
   res.status(status).send({
     message: message,
