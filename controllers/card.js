@@ -23,12 +23,12 @@ const deleteCard = (req, res, next) => {
     .findOne({ _id: cardId })
     .then((data) => {
       if (!data) {
-        const err = new Error('Карточка не найдена');
-        err.status = NO_ACCESS;
-        throw err;
+        throw new NotFound('Карточка не найдена');
       }
       if (data.owner.toString() !== req.user._id.id) {
-        throw new NotFound('Карточка не принадлежит вам');
+        const err = new Error('Карточка не принадлежит вам');
+        err.status = NO_ACCESS;
+        throw err;
       }
       console.log(data.owner.toString());
       cardModel
