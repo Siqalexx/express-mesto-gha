@@ -38,7 +38,7 @@ app.post(
         .default(
           'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png'
         ),
-      email: Joi.string().required(),
+      email: Joi.string().required().email(),
       password: Joi.string().required().min(6),
     }),
   }),
