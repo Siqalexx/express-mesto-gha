@@ -13,7 +13,7 @@ const getCards = (req, res, next) => {
 const setCard = (req, res, next) => {
   const { name, link } = req.body;
   cardModel
-    .create({ name, link, owner: req.user.user.id })
+    .create({ name, link, owner: req.user._id.id })
     .then((data) => res.status(OK).send(data))
     .catch(next);
 };
@@ -25,7 +25,7 @@ const deleteCard = (req, res, next) => {
       if (!data) {
         throw new NotFound('Карточка не найдена');
       }
-      if (data.owner.toString() !== req.user.user.id) {
+      if (data.owner.toString() !== req.user._id.id) {
         throw new NotFound('Карточка не принадлежит вам');
       }
       console.log(data.owner.toString());
@@ -40,7 +40,7 @@ const deleteCard = (req, res, next) => {
 };
 const setLike = (req, res, next) => {
   const { cardId } = req.params;
-  const id = req.user.user.id;
+  const id = req.user._id.id;
   cardModel
     .findByIdAndUpdate(cardId, { $addToSet: { likes: id } }, { new: true })
     .then((data) => {
@@ -53,7 +53,7 @@ const setLike = (req, res, next) => {
 };
 const deleteLike = (req, res, next) => {
   const { cardId } = req.params;
-  const id = req.user.user.id;
+  const id = req.user._id.id;
   cardModel
     .findByIdAndUpdate(cardId, { $pull: { likes: id } }, { new: true })
     .then((data) => {

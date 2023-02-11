@@ -6,7 +6,7 @@ const auth = (req, res, next) => {
     return res.status(DATA_ERROR).send({ message: 'Необходима авторизация' });
   }
   const payload = jsonwebtoken.verify(jwt, 'supersecretkey');
-  req.user = { user: payload };
+  req.user = { _id: payload };
   next();
 };
 

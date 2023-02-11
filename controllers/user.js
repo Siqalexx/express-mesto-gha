@@ -69,7 +69,7 @@ const updateProfile = (req, res, next) => {
   const { name, about } = req.body;
   userModel
     .findByIdAndUpdate(
-      req.user.user.id,
+      req.user._id.id,
       { name, about },
       {
         new: true,
@@ -133,10 +133,10 @@ const login = (req, res, next) => {
 };
 
 const getInfoUser = (req, res, next) => {
-  const { user } = req.user;
+  const { _id } = req.user;
 
   userModel
-    .findById(user.id)
+    .findById(_id.id)
     .then((data) => {
       if (!data) {
         throw new NotFound('Пользователь не найден');
