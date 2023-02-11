@@ -2,57 +2,45 @@ const NotFound = require('../errors/notFoundError');
 const { cardModel } = require('../models/card');
 const { OK, VALIDERR, OTHERERR } = require('../constants/constants');
 
-const checkError = (err, res) => {
-  console.log(err);
-  if (err.name === 'CastError' || err.name === 'ValidationError') {
-    res.status(VALIDERR).send({ message: err.message });
-  } else if (err.name === 'notFound') {
-    res.status(err.status).send({ message: err.message });
-    // думаю, что эта проверка не нужна, но иначе я не смогу разграничить кода ошибок
-  } else {
-    res.status(OTHERERR).send({ message: err.message });
-  }
-};
-
-const getCards = (req, res) => {
-  // Не знаю, нужно ли в каждом then обрабатывать получение data, ведь здесь
-  // так или иначе она придет не null
+const getCards = (req, res, next) => {
   cardModel
     .find({})
     .then((data) => {
       res.status(OK).send(data);
     })
-    .catch((err) => {
-      checkError(err, res);
-    });
+    .catch(next);
 };
-const setCard = (req, res) => {
+const setCard = (req, res, next) => {
   const { name, link } = req.body;
   cardModel
-    .create({ name, link, owner: req.user._id })
+    .create({ name, link, owner: req.user.user.id })
     .then((data) => res.status(OK).send(data))
-    .catch((err) => {
-      console.log(err);
-      checkError(err, res);
-    });
+    .catch(next);
 };
-const deleteCard = (req, res) => {
+const deleteCard = (req, res, next) => {
   const { cardId } = req.params;
   cardModel
-    .findByIdAndDelete(cardId)
+    .findOne({ _id: cardId })
     .then((data) => {
       if (!data) {
         throw new NotFound('Карточка не найдена');
       }
-      res.status(OK).send(data);
+      if (data.owner.toString() !== req.user.user.id) {
+        throw new NotFound('Карточка не принадлежит вам');
+      }
+      console.log(data.owner.toString());
+      cardModel
+        .deleteOne({ _id: cardId })
+        .then((data) => {
+          res.status(OK).send(data);
+        })
+        .catch(next);
     })
-    .catch((err) => {
-      checkError(err, res);
-    });
+    .catch(next);
 };
-const setLike = (req, res) => {
+const setLike = (req, res, next) => {
   const { cardId } = req.params;
-  const id = req.user._id;
+  const id = req.user.user.id;
   cardModel
     .findByIdAndUpdate(cardId, { $addToSet: { likes: id } }, { new: true })
     .then((data) => {
@@ -61,13 +49,11 @@ const setLike = (req, res) => {
       }
       res.status(OK).send(data);
     })
-    .catch((err) => {
-      checkError(err, res);
-    });
+    .catch(next);
 };
-const deleteLike = (req, res) => {
+const deleteLike = (req, res, next) => {
   const { cardId } = req.params;
-  const id = req.user._id;
+  const id = req.user.user.id;
   cardModel
     .findByIdAndUpdate(cardId, { $pull: { likes: id } }, { new: true })
     .then((data) => {
@@ -76,9 +62,7 @@ const deleteLike = (req, res) => {
       }
       res.status(OK).send(data);
     })
-    .catch((err) => {
-      checkError(err, res);
-    });
+    .catch(next);
 };
 
 module.exports = {

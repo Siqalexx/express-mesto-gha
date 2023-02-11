@@ -1,10 +1,16 @@
 const OK = 200;
 const VALIDERR = 400;
+const DATA_ERROR = 401;
 const ERRORSRC = 404;
+const DUBLICATE_DATA = 409;
 const OTHERERR = 500;
+const REQUIRED_PARAMETER = 422;
 module.exports = {
   OK,
   VALIDERR,
   OTHERERR,
   ERRORSRC,
+  REQUIRED_PARAMETER,
+  DATA_ERROR,
+  DUBLICATE_DATA,
 };
