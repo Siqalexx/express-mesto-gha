@@ -18,7 +18,7 @@ app.post(
   '/signin',
   celebrate({
     body: Joi.object().keys({
-      email: Joi.string().required(),
+      email: Joi.string().required().email(),
       password: Joi.string().required().min(6),
     }),
   }),
@@ -53,9 +53,15 @@ app.use('/', cardRouter);
 
 app.use(errors());
 
+app.use((req, res) => {
+  res.status(ERRORSRC).json({
+    message: 'Неправильный адрес',
+  });
+});
+
 app.use((err, req, res, next) => {
-  console.log(123);
   const { message, status = 500 } = err;
+  console.log(err);
   res.status(status).send({
     message: message,
   });

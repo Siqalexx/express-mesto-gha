@@ -1,6 +1,7 @@
 const OK = 200;
 const VALIDERR = 400;
 const DATA_ERROR = 401;
+const NO_ACCESS = 403;
 const ERRORSRC = 404;
 const DUBLICATE_DATA = 409;
 const OTHERERR = 500;
@@ -13,4 +14,5 @@ module.exports = {
   REQUIRED_PARAMETER,
   DATA_ERROR,
   DUBLICATE_DATA,
+  NO_ACCESS,
 };

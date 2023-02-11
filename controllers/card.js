@@ -1,6 +1,6 @@
 const NotFound = require('../errors/notFoundError');
 const { cardModel } = require('../models/card');
-const { OK, VALIDERR, OTHERERR } = require('../constants/constants');
+const { OK, VALIDERR, OTHERERR, NO_ACCESS } = require('../constants/constants');
 
 const getCards = (req, res, next) => {
   cardModel
@@ -23,7 +23,9 @@ const deleteCard = (req, res, next) => {
     .findOne({ _id: cardId })
     .then((data) => {
       if (!data) {
-        throw new NotFound('Карточка не найдена');
+        const err = new Error('Карточка не найдена');
+        err.status = NO_ACCESS;
+        throw err;
       }
       if (data.owner.toString() !== req.user._id.id) {
         throw new NotFound('Карточка не принадлежит вам');

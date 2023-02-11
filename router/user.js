@@ -6,9 +6,10 @@ const {
   updateProfile,
   updateAvatar,
   getInfoUser,
+  getUser,
 } = require('../controllers/user');
 userRouter.get('/users', getUsers);
-userRouter.get('/users/me', getInfoUser); //наверное нужно проверять куки
+userRouter.get('/users/me', getInfoUser); //наверное нужно проверять еще и куки
 userRouter.patch(
   '/users/me',
   celebrate({
@@ -19,11 +20,24 @@ userRouter.patch(
   }),
   updateProfile
 );
+userRouter.get(
+  '/users/:userId',
+  celebrate({
+    params: Joi.object().keys({
+      userId: Joi.string().alphanum().length(24),
+    }),
+  }),
+  getUser
+);
 userRouter.patch(
   '/users/me/avatar',
   celebrate({
     body: Joi.object().keys({
-      avatar: Joi.string().required(),
+      avatar: Joi.string()
+        .required()
+        .regex(
+          /https?:\/\/[www\.]?[a-z1-9\-*\.*\_*\~*\:*\/*\?*\#*\[*\]*\@*\!*\$*\&*\'*\(*\)*\**\+*\,*\;*\=*]+\.[a-z]+\/?[a-z1-9\-*\.*\_*\~*\:*\/*\?*\#*\[*\]*\@*\!*\$*\&*\'*\(*\)*\**\+*\,*\;*\=*]*\#?/m
+        ),
     }),
   }),
   updateAvatar

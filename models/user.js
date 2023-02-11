@@ -38,8 +38,8 @@ const userSchema = moongose.Schema({
   password: {
     type: String,
     required: true,
-    minlength: 6,
     select: false,
+    minlength: 6,
   },
 });
 module.exports.userModel = moongose.model('user', userSchema);

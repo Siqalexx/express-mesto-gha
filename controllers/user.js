@@ -40,7 +40,6 @@ const setUser = (req, res, next) => {
   userModel
     .findOne({ email: email })
     .then((data) => {
-      console.log(data);
       if (data !== null) {
         const err = new Error(`user with email ${email} already exists`);
         err.status = DUBLICATE_DATA;
@@ -57,8 +56,9 @@ const setUser = (req, res, next) => {
               email,
               password,
             })
-            .then((data) => {
-              res.status(OK).send(data);
+            .then(({ name, about, avatar, email }) => {
+              console.log(data);
+              res.status(OK).send({ name, about, avatar, email });
             });
         })
         .catch(next);
@@ -88,7 +88,7 @@ const updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
   userModel
     .findByIdAndUpdate(
-      req.user._id,
+      req.user._id.id,
       { avatar },
       { new: true, runValidators: true }
     )
@@ -125,7 +125,7 @@ const login = (req, res, next) => {
               maxAge: 3600000,
               httpOnly: true,
             })
-            .end();
+            .send('cookie is download');
         })
         .catch(next);
     })
@@ -145,7 +145,17 @@ const getInfoUser = (req, res, next) => {
     })
     .catch(next);
 };
-
+const getUser = (req, res, next) => {
+  userModel
+    .findOne({ _id: req.params.userId })
+    .then((data) => {
+      if (!data) {
+        throw new NotFound('Пользователь не найден');
+      }
+      res.status(OK).send(data);
+    })
+    .catch(next);
+};
 module.exports = {
   getUsers,
   setUser,
@@ -153,4 +163,5 @@ module.exports = {
   updateAvatar,
   login,
   getInfoUser,
+  getUser,
 };
