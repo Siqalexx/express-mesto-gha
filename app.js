@@ -1,6 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const { celebrate, Joi } = require('celebrate');
+const { celebrate, Joi, errors } = require('celebrate');
 const cookieParser = require('cookie-parser');
 const userRouter = require('./router/user');
 const cardRouter = require('./router/card');
@@ -13,6 +13,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(errors());
 
 app.post(
   '/signin',
