@@ -125,7 +125,7 @@ const login = (req, res, next) => {
               maxAge: 3600000,
               httpOnly: true,
             })
-            .send('cookie is download');
+            .send({ message: 'cookie is download' });
         })
         .catch(next);
     })
