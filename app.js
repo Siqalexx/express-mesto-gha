@@ -9,7 +9,7 @@ const { setUser, login } = require('./controllers/user');
 
 const app = express();
 const { auth } = require('./middlewares/auth');
-const NotFound = require('./errors/notFoundError');
+const NotFound = require('./errors/NotFoundError');
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
@@ -24,7 +24,7 @@ app.post(
       password: Joi.string().required().min(6),
     }),
   }),
-  login,
+  login
 );
 
 app.post(
@@ -33,20 +33,17 @@ app.post(
     body: Joi.object().keys({
       name: Joi.string().min(2).max(30),
       about: Joi.string().min(2).max(30),
-      avatar: Joi.string()
-        .regex(REGEPX_URL),
+      avatar: Joi.string().regex(REGEPX_URL),
       email: Joi.string().required().email(),
       password: Joi.string().required().min(6),
     }),
   }),
-  setUser,
+  setUser
 );
 
-app.use(auth);
+app.use('/users', auth, userRouter);
 
-app.use('/users', userRouter);
-
-app.use('/cards', cardRouter);
+app.use('/cards', auth, cardRouter);
 
 app.use(errors());
 
@@ -54,7 +51,7 @@ app.use((req, res, next) => {
   next(new NotFound('Неправильный адрес'));
 });
 
-app.use((err, req, res) => {
+app.use((err, req, res, next) => {
   const { message, status = 500 } = err;
   console.log(err);
   if (status !== 500) {
@@ -62,6 +59,7 @@ app.use((err, req, res) => {
       message,
     });
   }
+  next();
 });
 
 app.listen(3000, () => {

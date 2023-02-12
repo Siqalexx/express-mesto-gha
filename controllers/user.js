@@ -1,8 +1,8 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-const NotFound = require('../errors/notFoundError');
-const LoginError = require('../errors/loginError');
+const NotFound = require('../errors/NotFoundError');
+const LoginError = require('../errors/LoginError');
 const { userModel } = require('../models/user');
 const { OK } = require('../constants/constants');
 
@@ -16,9 +16,7 @@ const getUsers = (req, res, next) => {
     .catch(next);
 };
 const setUser = (req, res, next) => {
-  const {
-    name, about, avatar, email, password,
-  } = req.body;
+  const { name, about, avatar, email, password } = req.body;
   bcrypt
     .hash(password, SECRET_SAUL)
     .then((passwordHash) => {
@@ -38,7 +36,10 @@ const setUser = (req, res, next) => {
             email: data.email,
           });
         })
-        .catch(next);
+        .catch((err) => {
+          console.log(123);
+          next(err);
+        });
     })
     .catch(next);
 };
@@ -52,7 +53,7 @@ const updateProfile = (req, res, next) => {
       {
         new: true,
         runValidators: true,
-      },
+      }
     )
     .then((data) => {
       if (!data) {
@@ -68,7 +69,7 @@ const updateAvatar = (req, res, next) => {
     .findByIdAndUpdate(
       req.user.id,
       { avatar },
-      { new: true, runValidators: true },
+      { new: true, runValidators: true }
     )
     .then((data) => {
       if (!data) {

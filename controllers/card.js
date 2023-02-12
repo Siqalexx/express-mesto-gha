@@ -1,7 +1,8 @@
-const NotFound = require('../errors/notFoundError');
+const NotFound = require('../errors/NotFoundError');
 const { cardModel } = require('../models/card');
 const { OK, CREATE_OBJECT } = require('../constants/constants');
-const LoginError = require('../errors/loginError');
+const LoginError = require('../errors/LoginError');
+const Forbidden = require('../errors/Forbidden');
 
 const getCards = (req, res, next) => {
   cardModel
@@ -20,6 +21,7 @@ const setCard = (req, res, next) => {
 };
 const deleteCard = (req, res, next) => {
   const { cardId } = req.params;
+  console.log(112);
   cardModel
     .findOne({ _id: cardId })
     .then((data) => {
@@ -27,8 +29,9 @@ const deleteCard = (req, res, next) => {
         throw new NotFound('Карточка не найдена');
       }
       if (data.owner.toString() !== req.user.id) {
-        throw new LoginError('Карточка не принадлежит вам');
+        throw new Forbidden('Карточка не принадлежит вам');
       }
+      console.log(112);
       console.log(data.owner.toString());
       data
         .remove()
