@@ -1,6 +1,7 @@
 const NotFound = require('../errors/notFoundError');
 const { cardModel } = require('../models/card');
-const { OK, VALIDERR, OTHERERR, NO_ACCESS } = require('../constants/constants');
+const { OK, CREATE_OBJECT } = require('../constants/constants');
+const LoginError = require('../errors/loginError');
 
 const getCards = (req, res, next) => {
   cardModel
@@ -13,8 +14,8 @@ const getCards = (req, res, next) => {
 const setCard = (req, res, next) => {
   const { name, link } = req.body;
   cardModel
-    .create({ name, link, owner: req.user._id.id })
-    .then((data) => res.status(OK).send(data))
+    .create({ name, link, owner: req.user.id })
+    .then((data) => res.status(CREATE_OBJECT).send(data))
     .catch(next);
 };
 const deleteCard = (req, res, next) => {
@@ -25,16 +26,14 @@ const deleteCard = (req, res, next) => {
       if (!data) {
         throw new NotFound('Карточка не найдена');
       }
-      if (data.owner.toString() !== req.user._id.id) {
-        const err = new Error('Карточка не принадлежит вам');
-        err.status = NO_ACCESS;
-        throw err;
+      if (data.owner.toString() !== req.user.id) {
+        throw new LoginError('Карточка не принадлежит вам');
       }
       console.log(data.owner.toString());
-      cardModel
-        .deleteOne({ _id: cardId })
-        .then((data) => {
-          res.status(OK).send(data);
+      data
+        .remove()
+        .then((result) => {
+          res.status(OK).send(result);
         })
         .catch(next);
     })
@@ -42,7 +41,7 @@ const deleteCard = (req, res, next) => {
 };
 const setLike = (req, res, next) => {
   const { cardId } = req.params;
-  const id = req.user._id.id;
+  const { id } = req.user;
   cardModel
     .findByIdAndUpdate(cardId, { $addToSet: { likes: id } }, { new: true })
     .then((data) => {
@@ -55,7 +54,7 @@ const setLike = (req, res, next) => {
 };
 const deleteLike = (req, res, next) => {
   const { cardId } = req.params;
-  const id = req.user._id.id;
+  const { id } = req.user;
   cardModel
     .findByIdAndUpdate(cardId, { $pull: { likes: id } }, { new: true })
     .then((data) => {

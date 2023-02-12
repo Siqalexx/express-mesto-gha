@@ -1,13 +1,9 @@
 const moongose = require('mongoose');
 const validator = require('validator');
+const { validationAvatar } = require('../utils/validationAvatar');
 
 function validationEmail(email) {
   return validator.isEmail(email);
-}
-function validationAvatar(link) {
-  return /https?:\/\/[www\.]?[a-z1-9\-*\.*\_*\~*\:*\/*\?*\#*\[*\]*\@*\!*\$*\&*\'*\(*\)*\**\+*\,*\;*\=*]+\.[a-z]+[a-z1-9\-*\.*\_*\~*\:*\/*\?*\#*\[*\]*\@*\!*\$*\&*\'*\(*\)*\**\+*\,*\;*\=*]*/gim.test(
-    link
-  );
 }
 
 const userSchema = moongose.Schema({
@@ -39,7 +35,6 @@ const userSchema = moongose.Schema({
     type: String,
     required: true,
     select: false,
-    minlength: 6,
   },
 });
 module.exports.userModel = moongose.model('user', userSchema);

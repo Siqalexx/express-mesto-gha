@@ -4,10 +4,12 @@ const { celebrate, Joi, errors } = require('celebrate');
 const cookieParser = require('cookie-parser');
 const userRouter = require('./router/user');
 const cardRouter = require('./router/card');
-const { ERRORSRC } = require('./constants/constants');
+const { REGEPX_URL } = require('./constants/constants');
 const { setUser, login } = require('./controllers/user');
+
 const app = express();
 const { auth } = require('./middlewares/auth');
+const NotFound = require('./errors/notFoundError');
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
@@ -22,49 +24,44 @@ app.post(
       password: Joi.string().required().min(6),
     }),
   }),
-  login
+  login,
 );
 
 app.post(
   '/signup',
   celebrate({
     body: Joi.object().keys({
-      name: Joi.string().min(2).max(30).default('Жак-Ив Кусто'),
-      about: Joi.string().min(2).max(30).default('Исследователь'),
+      name: Joi.string().min(2).max(30),
+      about: Joi.string().min(2).max(30),
       avatar: Joi.string()
-        .regex(
-          /https?:\/\/[www\.]?[a-z1-9\-*\.*\_*\~*\:*\/*\?*\#*\[*\]*\@*\!*\$*\&*\'*\(*\)*\**\+*\,*\;*\=*]+\.[a-z]+\/?[a-z1-9\-*\.*\_*\~*\:*\/*\?*\#*\[*\]*\@*\!*\$*\&*\'*\(*\)*\**\+*\,*\;*\=*]*\#?/m
-        )
-        .default(
-          'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png'
-        ),
+        .regex(REGEPX_URL),
       email: Joi.string().required().email(),
       password: Joi.string().required().min(6),
     }),
   }),
-  setUser
+  setUser,
 );
 
 app.use(auth);
 
-app.use('/', userRouter);
+app.use('/users', userRouter);
 
-app.use('/', cardRouter);
+app.use('/cards', cardRouter);
 
 app.use(errors());
 
-app.use((req, res) => {
-  res.status(ERRORSRC).json({
-    message: 'Неправильный адрес',
-  });
+app.use((req, res, next) => {
+  next(new NotFound('Неправильный адрес'));
 });
 
-app.use((err, req, res, next) => {
+app.use((err, req, res) => {
   const { message, status = 500 } = err;
   console.log(err);
-  res.status(status).send({
-    message: message,
-  });
+  if (status !== 500) {
+    res.status(status).send({
+      message,
+    });
+  }
 });
 
 app.listen(3000, () => {

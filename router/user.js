@@ -1,5 +1,6 @@
 const userRouter = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
+const { REGEPX_URL } = require('../constants/constants');
 
 const {
   getUsers,
@@ -8,38 +9,35 @@ const {
   getInfoUser,
   getUser,
 } = require('../controllers/user');
-userRouter.get('/users', getUsers);
-userRouter.get('/users/me', getInfoUser); //наверное нужно проверять еще и куки
+
+userRouter.get('/', getUsers);
+userRouter.get('/me', getInfoUser); // наверное нужно проверять еще и куки
 userRouter.patch(
-  '/users/me',
+  '/me',
   celebrate({
     body: Joi.object().keys({
-      name: Joi.string().min(2).max(30),
-      about: Joi.string().min(2).max(30),
+      name: Joi.string().required().min(2).max(30),
+      about: Joi.string().required().min(2).max(30),
     }),
   }),
-  updateProfile
+  updateProfile,
 );
 userRouter.get(
-  '/users/:userId',
+  '/:userId',
   celebrate({
     params: Joi.object().keys({
-      userId: Joi.string().alphanum().length(24),
+      userId: Joi.string().required().hex().length(24),
     }),
   }),
-  getUser
+  getUser,
 );
 userRouter.patch(
-  '/users/me/avatar',
+  '/me/avatar',
   celebrate({
     body: Joi.object().keys({
-      avatar: Joi.string()
-        .required()
-        .regex(
-          /https?:\/\/[www\.]?[a-z1-9\-*\.*\_*\~*\:*\/*\?*\#*\[*\]*\@*\!*\$*\&*\'*\(*\)*\**\+*\,*\;*\=*]+\.[a-z]+\/?[a-z1-9\-*\.*\_*\~*\:*\/*\?*\#*\[*\]*\@*\!*\$*\&*\'*\(*\)*\**\+*\,*\;*\=*]*\#?/m
-        ),
+      avatar: Joi.string().required().regex(REGEPX_URL),
     }),
   }),
-  updateAvatar
+  updateAvatar,
 );
 module.exports = userRouter;

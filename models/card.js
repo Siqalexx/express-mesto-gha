@@ -1,4 +1,5 @@
 const moongose = require('mongoose');
+const { validationAvatar } = require('../utils/validationAvatar');
 
 const cardSchema = moongose.Schema({
   name: {
@@ -10,6 +11,7 @@ const cardSchema = moongose.Schema({
   link: {
     type: String,
     required: true,
+    validate: validationAvatar,
   },
   owner: {
     type: moongose.Schema.Types.ObjectId,
