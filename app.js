@@ -52,11 +52,13 @@ app.use((req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-  const { message, status = 500 } = err;
-  console.log(err);
+  let { status = 500 } = err;
+  if (err.code === 11000) {
+    status = 409;
+  }
   if (status !== 500) {
     res.status(status).send({
-      message,
+      message: err.message,
     });
   }
   next();
