@@ -16,7 +16,9 @@ const getUsers = (req, res, next) => {
     .catch(next);
 };
 const setUser = (req, res, next) => {
-  const { name, about, avatar, email, password } = req.body;
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
   bcrypt
     .hash(password, SECRET_SAUL)
     .then((passwordHash) => {
@@ -53,7 +55,7 @@ const updateProfile = (req, res, next) => {
       {
         new: true,
         runValidators: true,
-      }
+      },
     )
     .then((data) => {
       if (!data) {
@@ -69,7 +71,7 @@ const updateAvatar = (req, res, next) => {
     .findByIdAndUpdate(
       req.user.id,
       { avatar },
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     )
     .then((data) => {
       if (!data) {

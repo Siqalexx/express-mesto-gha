@@ -1,7 +1,6 @@
 const NotFound = require('../errors/NotFoundError');
 const { cardModel } = require('../models/card');
 const { OK, CREATE_OBJECT } = require('../constants/constants');
-const LoginError = require('../errors/LoginError');
 const Forbidden = require('../errors/Forbidden');
 
 const getCards = (req, res, next) => {

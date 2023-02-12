@@ -1,13 +1,10 @@
 const jsonwebtoken = require('jsonwebtoken');
-const { DATA_ERROR } = require('../constants/constants');
+const LoginError = require('../errors/LoginError');
 // const LoginError = require('../errors/loginError');
 const auth = (req, res, next) => {
   const { jwt } = req.cookies;
   if (!jwt) {
-    // это все запускает бесконечный вызов ошибки до момента прихода токена
-    // throw new LoginError('Необходима авторизация');
-    // next(new LoginError('Необходима авторизация'));
-    return res.status(DATA_ERROR).send({ message: 'Необходима авторизация' });
+    throw new LoginError('Необходима авторизация');
   }
   try {
     const payload = jsonwebtoken.verify(jwt, 'supersecretkey');
@@ -15,7 +12,7 @@ const auth = (req, res, next) => {
   } catch (error) {
     next(error);
   }
-  next();
+  return next();
 };
 
 module.exports = {
