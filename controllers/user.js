@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const NotFound = require('../errors/NotFoundError');
 const LoginError = require('../errors/LoginError');
 const { userModel } = require('../models/user');
-const { OK } = require('../constants/constants');
+const { OK, VALIDERR } = require('../constants/constants');
 
 const SECRET_SAUL = 10;
 const PRIVATE_KEY = 'supersecretkey';
@@ -39,8 +39,11 @@ const setUser = (req, res, next) => {
           });
         })
         .catch((err) => {
-          console.log(123);
-          next(err);
+          const error = err;
+          if (error.code === 11000) {
+            error.status = 409;
+          }
+          next(error);
         });
     })
     .catch(next);
@@ -63,7 +66,13 @@ const updateProfile = (req, res, next) => {
       }
       res.status(OK).send(data);
     })
-    .catch(next);
+    .catch((err) => {
+      const error = err;
+      if (error.name === 'ValidationError') {
+        error.status = VALIDERR;
+      }
+      next(error);
+    });
 };
 const updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
@@ -79,7 +88,13 @@ const updateAvatar = (req, res, next) => {
       }
       res.status(OK).send(data);
     })
-    .catch(next);
+    .catch((err) => {
+      const error = err;
+      if (error.name === 'ValidationError') {
+        error.status = VALIDERR;
+      }
+      next(error);
+    });
 };
 const login = (req, res, next) => {
   const { email, password } = req.body;
@@ -135,7 +150,13 @@ const getUser = (req, res, next) => {
       }
       res.status(OK).send(data);
     })
-    .catch(next);
+    .catch((err) => {
+      const error = err;
+      if (error.name === 'CastError') {
+        error.status = VALIDERR;
+      }
+      next(error);
+    });
 };
 module.exports = {
   getUsers,

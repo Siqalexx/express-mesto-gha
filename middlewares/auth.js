@@ -4,13 +4,13 @@ const LoginError = require('../errors/LoginError');
 const auth = (req, res, next) => {
   const { jwt } = req.cookies;
   if (!jwt) {
-    throw new LoginError('Необходима авторизация');
+    next(new LoginError('Необходима авторизация'));
   }
   try {
     const payload = jsonwebtoken.verify(jwt, 'supersecretkey');
     req.user = payload;
   } catch (error) {
-    next(error);
+    return next(new LoginError(error.message)); // отправляем кастомную ошибку авторизации
   }
   return next();
 };

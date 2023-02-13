@@ -45,21 +45,23 @@ app.use('/users', auth, userRouter);
 
 app.use('/cards', auth, cardRouter);
 
-app.use(errors());
-
 app.use((req, res, next) => {
   next(new NotFound('Неправильный адрес'));
 });
 
+app.use(errors());
+
 app.use((err, req, res, next) => {
-  let { status = 500 } = err;
-  if (err.code === 11000) {
-    status = 409;
-  }
+  const { message, status = 500 } = err;
   if (status !== 500) {
     res.status(status).send({
-      message: err.message,
+      message,
     });
+  } else {
+    res.status(status).send({
+      message: 'Ошибка сервера',
+    });
+    console.log(message);
   }
   next();
 });
