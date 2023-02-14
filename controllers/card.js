@@ -41,13 +41,13 @@ const deleteCard = (req, res, next) => {
         .then((result) => {
           res.status(OK).send(result);
         })
-        .catch(next)
-        .catch((err) => {
-          if (err.name === 'CastError') {
-            return next(new ValidationError(err.message));
-          }
-          return next(err);
-        });
+        .catch(next);
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        return next(new ValidationError(err.message));
+      }
+      return next(err);
     });
 };
 const setLike = (req, res, next) => {
