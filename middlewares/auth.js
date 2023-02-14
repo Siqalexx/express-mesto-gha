@@ -4,7 +4,7 @@ const LoginError = require('../errors/LoginError');
 const auth = (req, res, next) => {
   const { jwt } = req.cookies;
   if (!jwt) {
-    next(new LoginError('Необходима авторизация'));
+    return next(new LoginError('Необходима авторизация'));
   }
   try {
     const payload = jsonwebtoken.verify(jwt, 'supersecretkey');

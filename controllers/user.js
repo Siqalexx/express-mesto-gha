@@ -4,7 +4,9 @@ const jwt = require('jsonwebtoken');
 const NotFound = require('../errors/NotFoundError');
 const LoginError = require('../errors/LoginError');
 const { userModel } = require('../models/user');
-const { OK, VALIDERR } = require('../constants/constants');
+const { OK } = require('../constants/constants');
+const Conflict = require('../errors/Conflict');
+const ValidationError = require('../errors/ValidationError');
 
 const SECRET_SAUL = 10;
 const PRIVATE_KEY = 'supersecretkey';
@@ -39,11 +41,13 @@ const setUser = (req, res, next) => {
           });
         })
         .catch((err) => {
-          const error = err;
-          if (error.code === 11000) {
-            error.status = 409;
+          if (err.code === 11000) {
+            return next(new Conflict(err.message));
           }
-          next(error);
+          if (err.name === 'ValidationError') {
+            return next(new ValidationError(err.message));
+          }
+          return next(err);
         });
     })
     .catch(next);
@@ -67,11 +71,10 @@ const updateProfile = (req, res, next) => {
       res.status(OK).send(data);
     })
     .catch((err) => {
-      const error = err;
-      if (error.name === 'ValidationError') {
-        error.status = VALIDERR;
+      if (err.name === 'ValidationError') {
+        return next(new ValidationError(err.message));
       }
-      next(error);
+      return next(err);
     });
 };
 const updateAvatar = (req, res, next) => {
@@ -89,11 +92,10 @@ const updateAvatar = (req, res, next) => {
       res.status(OK).send(data);
     })
     .catch((err) => {
-      const error = err;
-      if (error.name === 'ValidationError') {
-        error.status = VALIDERR;
+      if (err.name === 'ValidationError') {
+        return next(new ValidationError(err.message));
       }
-      next(error);
+      return next(err);
     });
 };
 const login = (req, res, next) => {
@@ -151,11 +153,10 @@ const getUser = (req, res, next) => {
       res.status(OK).send(data);
     })
     .catch((err) => {
-      const error = err;
-      if (error.name === 'CastError') {
-        error.status = VALIDERR;
+      if (err.name === 'ValidationError') {
+        return next(new ValidationError(err.message));
       }
-      next(error);
+      return next(err);
     });
 };
 module.exports = {

@@ -1,12 +1,13 @@
 const NotFound = require('../errors/NotFoundError');
 const { cardModel } = require('../models/card');
-const { OK, CREATE_OBJECT, VALIDERR } = require('../constants/constants');
+const { OK, CREATE_OBJECT } = require('../constants/constants');
 const Forbidden = require('../errors/Forbidden');
+const ValidationError = require('../errors/ValidationError');
 
 const getCards = (req, res, next) => {
   cardModel
     .find({})
-    .populate('owner')
+    .populate(['owner', 'likes'])
     .then((data) => {
       res.status(OK).send(data);
     })
@@ -18,11 +19,10 @@ const setCard = (req, res, next) => {
     .create({ name, link, owner: req.user.id })
     .then((data) => res.status(CREATE_OBJECT).send(data))
     .catch((err) => {
-      const error = err;
-      if (error.name === 'ValidationError') {
-        error.status = VALIDERR;
+      if (err.name === 'ValidationError') {
+        return next(new ValidationError(err.message));
       }
-      next(error);
+      return next(err);
     });
 };
 const deleteCard = (req, res, next) => {
@@ -41,22 +41,21 @@ const deleteCard = (req, res, next) => {
         .then((result) => {
           res.status(OK).send(result);
         })
+        .catch(next)
         .catch((err) => {
-          const error = err;
-          if (error.name === 'CastError') {
-            error.status = VALIDERR;
+          if (err.name === 'CastError') {
+            return next(new ValidationError(err.message));
           }
-          next(error);
+          return next(err);
         });
-    })
-    .catch(next);
+    });
 };
 const setLike = (req, res, next) => {
   const { cardId } = req.params;
   const { id } = req.user;
   cardModel
     .findByIdAndUpdate(cardId, { $addToSet: { likes: id } }, { new: true })
-    .populate('owner')
+    .populate(['owner', 'likes'])
     .then((data) => {
       if (!data) {
         throw new NotFound('Карточка не найдена');
@@ -64,11 +63,10 @@ const setLike = (req, res, next) => {
       res.status(OK).send(data);
     })
     .catch((err) => {
-      const error = err;
-      if (error.name === 'CastError') {
-        error.status = VALIDERR;
+      if (err.name === 'CastError') {
+        return next(new ValidationError(err.message));
       }
-      next(error);
+      return next(err);
     });
 };
 const deleteLike = (req, res, next) => {
@@ -83,11 +81,10 @@ const deleteLike = (req, res, next) => {
       res.status(OK).send(data);
     })
     .catch((err) => {
-      const error = err;
-      if (error.name === 'CastError') {
-        error.status = VALIDERR;
+      if (err.name === 'CastError') {
+        return next(new ValidationError(err.message));
       }
-      next(error);
+      return next(err);
     });
 };
 
