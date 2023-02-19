@@ -26,7 +26,7 @@ const corsOptions = {
   origin: (origin, callback) => {
     console.log(origin);
     if (allowedCors.indexOf(origin) !== -1 || !origin) {
-      callback(null, true);
+      callback(null, { origin: true });
     } else {
       callback(new Error('Cors error'));
     }
