@@ -6,6 +6,7 @@ const userRouter = require('./router/user');
 const cardRouter = require('./router/card');
 const { REGEPX_URL } = require('./constants/constants');
 const { setUser, login } = require('./controllers/user');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const app = express();
 const { auth } = require('./middlewares/auth');
@@ -15,6 +16,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(requestLogger);
 
 app.post(
   '/signin',
@@ -44,6 +46,8 @@ app.post(
 app.use('/users', auth, userRouter);
 
 app.use('/cards', auth, cardRouter);
+
+app.use(errorLogger);
 
 app.use((req, res, next) => {
   next(new NotFound('Неправильный адрес'));
