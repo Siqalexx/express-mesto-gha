@@ -22,21 +22,31 @@ const allowedCors = [
   'http://localhost:3000/',
   'https://www.google.ru',
 ];
-const corsOptions = {
-  origin: (origin, callback) => {
-    console.log(origin);
-    if (allowedCors.indexOf(origin) !== -1 || !origin) {
-      callback(null, { origin: true });
-    } else {
-      callback(new Error('Cors error'));
-    }
-  },
-  methods: ['GET', 'POST', 'DELETE', 'UPDATE', 'PUT', 'PATCH', 'OPTIONS'],
-};
+// const corsOptions = {
+//   origin: (origin, callback) => {
+//     console.log(origin);
+//     if (allowedCors.indexOf(origin) !== -1 || !origin) {
+//       callback(null, { origin: true });
+//     } else {
+//       callback(new Error('Cors error'));
+//     }
+//   },
+//   methods: ['GET', 'POST', 'DELETE', 'UPDATE', 'PUT', 'PATCH', 'OPTIONS'],
+// };
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors(corsOptions));
+app.use(
+  cors({
+    origin: [
+      'https://ivanov-social.nomoredomains.work',
+      'https://api.ivanov-social.nomoredomains.work',
+      'http://localhost:3000',
+      'http://localhost:3000/',
+      'https://www.google.ru',
+    ],
+  }),
+);
 app.use(requestLogger);
 
 app.post(
