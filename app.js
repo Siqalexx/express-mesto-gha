@@ -1,6 +1,5 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const cors = require('cors');
 const { celebrate, Joi, errors } = require('celebrate');
 const cookieParser = require('cookie-parser');
 const userRouter = require('./router/user');
@@ -12,35 +11,12 @@ const { requestLogger, errorLogger } = require('./middlewares/logger');
 const app = express();
 const { auth } = require('./middlewares/auth');
 const NotFound = require('./errors/NotFoundError');
+const { cors } = require('./middlewares/cors');
+
+app.use(cors);
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
-const allowedCors = [
-  'https://ivanov-social.nomoredomains.work',
-  'https://api.ivanov-social.nomoredomains.work',
-  'http://localhost:3000',
-  'http://localhost:3000/',
-  'https://www.google.ru',
-];
-// const corsOptions = {
-//   origin: (origin, callback) => {
-//     console.log(origin);
-//     if (allowedCors.indexOf(origin) !== -1 || !origin) {
-//       callback(null, { origin: true });
-//     } else {
-//       callback(new Error('Cors error'));
-//     }
-//   },
-//   methods: ['GET', 'POST', 'DELETE', 'UPDATE', 'PUT', 'PATCH', 'OPTIONS'],
-// };
-app.use(
-  cors({
-    credentials: true,
-    preflightContinue: true,
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    origin: true,
-  }),
-);
 app.use(express.json());
 app.use(cookieParser());
 
