@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors');
 const { celebrate, Joi, errors } = require('celebrate');
 const cookieParser = require('cookie-parser');
 const userRouter = require('./router/user');
@@ -14,6 +15,25 @@ const NotFound = require('./errors/NotFoundError');
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
+const allowedCors = [
+  'https://ivanov-social.nomoredomains.work',
+  'https://api.ivanov-social.nomoredomains.work',
+  'http://localhost:3000',
+  'https://www.google.ru',
+];
+const corsOptions = {
+  origin: (origin, callback) => {
+    console.log(origin);
+    if (allowedCors.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Cors error'));
+    }
+  },
+  methods: ['GET', 'POST', 'DELETE', 'UPDATE', 'PUT', 'PATCH'],
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 app.use(requestLogger);
@@ -26,7 +46,7 @@ app.post(
       password: Joi.string().required().min(6),
     }),
   }),
-  login,
+  login
 );
 
 app.post(
@@ -40,7 +60,7 @@ app.post(
       password: Joi.string().required().min(6),
     }),
   }),
-  setUser,
+  setUser
 );
 
 app.use('/users', auth, userRouter);
