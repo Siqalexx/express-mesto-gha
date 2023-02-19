@@ -33,7 +33,14 @@ const allowedCors = [
 //   },
 //   methods: ['GET', 'POST', 'DELETE', 'UPDATE', 'PUT', 'PATCH', 'OPTIONS'],
 // };
-app.use(cors());
+app.use(
+  cors({
+    credentials: true,
+    preflightContinue: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    origin: true,
+  }),
+);
 app.use(express.json());
 app.use(cookieParser());
 
