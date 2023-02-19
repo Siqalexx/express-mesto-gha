@@ -33,20 +33,10 @@ const allowedCors = [
 //   },
 //   methods: ['GET', 'POST', 'DELETE', 'UPDATE', 'PUT', 'PATCH', 'OPTIONS'],
 // };
-
+app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
-app.use(
-  cors({
-    origin: [
-      'https://ivanov-social.nomoredomains.work',
-      'https://api.ivanov-social.nomoredomains.work',
-      'http://localhost:3000',
-      'http://localhost:3000/',
-      'https://www.google.ru',
-    ],
-  }),
-);
+
 app.use(requestLogger);
 
 app.post(
