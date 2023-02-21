@@ -9,7 +9,7 @@ const Conflict = require('../errors/Conflict');
 const ValidationError = require('../errors/ValidationError');
 
 const SECRET_SAUL = 10;
-const PRIVATE_KEY = 'supersecretkey';
+const PRIVATE_KEY = process.env.JWT_SECRET;
 
 const getUsers = (req, res, next) => {
   userModel
@@ -114,9 +114,13 @@ const login = (req, res, next) => {
           if (!result) {
             throw new LoginError('email or password is not correct');
           }
-          const token = jwt.sign({ id: data._id }, PRIVATE_KEY, {
-            expiresIn: '7d',
-          });
+          const token = jwt.sign(
+            { id: data._id },
+            process.env.NODE_ENV === 'production' ? PRIVATE_KEY : 'dev-secret',
+            {
+              expiresIn: '7d',
+            },
+          );
           console.log(token);
           res
             .cookie('jwt', token, {
