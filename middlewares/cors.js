@@ -1,6 +1,4 @@
 const allowedCors = [
-  'https://ivanov-social.nomoredomains.work',
-  'https://api.ivanov-social.nomoredomains.work',
   'http://ivanov-social.nomoredomains.work',
   'http://api.ivanov-social.nomoredomains.work',
   'localhost:3000',
