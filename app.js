@@ -30,7 +30,7 @@ app.post(
       password: Joi.string().required().min(6),
     }),
   }),
-  login
+  login,
 );
 
 app.post(
@@ -44,7 +44,7 @@ app.post(
       password: Joi.string().required().min(6),
     }),
   }),
-  setUser
+  setUser,
 );
 
 app.use('/users', auth, userRouter);

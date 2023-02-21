@@ -8,6 +8,7 @@ const {
   updateAvatar,
   getInfoUser,
   getUser,
+  logout,
 } = require('../controllers/user');
 
 userRouter.get('/', getUsers);
@@ -22,6 +23,9 @@ userRouter.patch(
   }),
   updateProfile,
 );
+
+userRouter.get('/logout', logout);
+
 userRouter.get(
   '/:userId',
   celebrate({
@@ -40,4 +44,5 @@ userRouter.patch(
   }),
   updateAvatar,
 );
+
 module.exports = userRouter;

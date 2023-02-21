@@ -159,6 +159,15 @@ const getUser = (req, res, next) => {
       return next(err);
     });
 };
+const logout = (req, res, next) => {
+  try {
+    console.log('logout');
+    res.cookie('jwt', 'none', { maxAge: 0, httpOnly: true });
+    res.status(OK).json({ message: 'User logged out successfully' });
+  } catch (error) {
+    return next(error);
+  }
+};
 module.exports = {
   getUsers,
   setUser,
@@ -167,4 +176,5 @@ module.exports = {
   login,
   getInfoUser,
   getUser,
+  logout,
 };
