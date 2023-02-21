@@ -139,6 +139,7 @@ const getInfoUser = (req, res, next) => {
       if (!data) {
         throw new NotFound('Пользователь не найден');
       }
+      console.log(data);
       res.status(OK).send(data);
     })
     .catch(next);
@@ -161,9 +162,8 @@ const getUser = (req, res, next) => {
 };
 const logout = (req, res, next) => {
   try {
-    console.log('logout');
     res.cookie('jwt', 'none', { maxAge: 0, httpOnly: true });
-    res.status(OK).json({ message: 'User logged out successfully' });
+    return res.status(OK).json({ message: 'User logged out successfully' });
   } catch (error) {
     return next(error);
   }
