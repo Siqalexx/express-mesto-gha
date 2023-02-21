@@ -24,6 +24,12 @@ app.use(cookieParser());
 
 app.use(requestLogger);
 
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
+});
+
 app.post(
   '/signin',
   celebrate({
@@ -77,6 +83,5 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(3000, () => {
-  // передаю порт таким образом, потому что нет возможности передать его через set в VScodе,
   console.log('Сервер запущен');
 });

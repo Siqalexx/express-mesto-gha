@@ -106,8 +106,7 @@ const login = (req, res, next) => {
     .then((data) => {
       if (data == null) {
         throw new LoginError('email or password is not correct');
-      }
-
+      } // process.env.NODE_ENV === 'production' ? PRIVATE_KEY : 'dev-secret'
       bcrypt
         .compare(password, data.password)
         .then((result) => {
