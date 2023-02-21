@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 const mongoose = require('mongoose');
 const { celebrate, Joi, errors } = require('celebrate');
@@ -21,6 +23,12 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use(requestLogger);
+
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
+});
 
 app.post(
   '/signin',
@@ -75,6 +83,5 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(3000, () => {
-  // передаю порт таким образом, потому что нет возможности передать его через set в VScodе,
   console.log('Сервер запущен');
 });
